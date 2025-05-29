@@ -31,10 +31,5 @@ pipeline {
     }
   }
 
-  post {
-    always {
-      echo 'Cleaning up...'
-      sh 'docker-compose down -v'
-    }
-  }
+  
 }
