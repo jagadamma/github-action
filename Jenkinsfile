@@ -1,43 +1,40 @@
 pipeline {
-    agent any
-    
-    stages {    
-        stage('Install Dependencies') {
-            steps {
-                // Install Node.js and npm
-                script {
-                    sh 'curl -sL https://deb.nodesource.com/setup_14.x | bash -'
-                    sh 'yum install -y nodejs'
-                }
-            }
-        }
-        
-        stage('Build Client') {
-            steps {
-                // Build the client application
-                dir('client') {
-                    sh 'npm install' // Use 'npm install' to install dependencies
-                    sh 'npm run build'
-                }
-            }
-        }
-        
-        stage('Start Server') {
-            steps {
-                // Start the server application
-                dir('server') {
-                    sh 'npm install -g pm2' // Install PM2 globally
-                    sh 'npm install' // Use 'npm install' to install server dependencies
-                    sh 'pm2 start index.js' // Start the server with PM2
-                }
-            }
-        }
-        
-        stage('Deploy with Docker Compose') {
-            steps {
-                // Deploy the application using Docker Compose
-                sh 'sudo docker-compose up -d'
-            }
-        }
+  agent any
+
+  environment {
+    COMPOSE_PROJECT_NAME = "myapp"
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
+
+    stage('Build & Start Services') {
+      steps {
+        script {
+          // Stop any existing containers
+          sh 'docker-compose down'
+
+          // Build images and start services
+          sh 'docker-compose up -d --build'
+        }
+      }
+    }
+
+    stage('Verify Containers') {
+      steps {
+        sh 'docker ps -a'
+      }
+    }
+  }
+
+  post {
+    always {
+      echo 'Cleaning up...'
+      sh 'docker-compose down -v'
+    }
+  }
 }
