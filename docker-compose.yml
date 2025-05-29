@@ -7,8 +7,8 @@ services:
       - "27017:27017"
     environment:
       MONGO_INITDB_DATABASE: mongo  # Corrected the environment variable name
-      MONGO_INITDB_ROOT_USERNAME: abi
-      MONGO_INITDB_ROOT_PASSWORD: abi
+      MONGO_INITDB_ROOT_USERNAME: abilash
+      MONGO_INITDB_ROOT_PASSWORD: abilash
     volumes:
       - mongodb-data:/data/db
     networks:
