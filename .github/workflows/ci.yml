@@ -9,7 +9,7 @@ jobs:
     runs-on: self-hosted
 
     env:
-      IMAGE_NAME: jagadamma/cliniimg
+      IMAGE_NAME: jagadamma/client
       VERSION: v1
 
     steps:
@@ -23,6 +23,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
+          cd client
           docker build -t ${IMAGE_NAME}:${VERSION} .
 
       - name: Tag Image for Docker Hub
