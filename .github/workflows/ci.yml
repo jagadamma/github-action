@@ -11,7 +11,7 @@ jobs:
     env:
       # Customize this
       IMAGE_NAME: myimg             
-      VERSION: latest
+      VERSION: ${{ github.run_number }}
       REPO_URL: https://github.com/jagadamma/3tier.git
 
     steps:
