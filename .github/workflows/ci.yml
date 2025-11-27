@@ -9,8 +9,10 @@ jobs:
     runs-on: self-hosted
 
     env:
-      IMAGE_NAME: client
-      VERSION: v1
+      # Customize this
+      IMAGE_NAME: client               
+      VERSION: v1                     
+      REPO_URL: https://github.com/jagadamma/3tier.git
 
     steps:
       - name: Checkout code
@@ -39,3 +41,27 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}:${VERSION}
+
+ 
+      - name: Clone 3tier Repo
+        run: |
+          git clone https://${{ secrets.PAT_TOKEN }}@github.com/jagadamma/3tier.git
+
+      - name: Update frontend & backend image in YAML
+        run: |
+          cd 3tier
+
+          # Update backend image inside backend.yml
+          sed -i "s#image: .*#image: ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}:${VERSION}#g" backend.yml
+
+          # Update frontend image inside frontend-deployment.yaml
+          sed -i "s#image: .*#image: ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}:${VERSION}#g" frontend-deployment.yaml
+
+      - name: Commit & Push Changes to 3tier
+        run: |
+          cd 3tier
+          git config --global user.email "abilashp.unni@gmail.com"
+          git config --global user.name "jagadamma"
+          git add backend.yml frontend-deployment.yaml
+          git commit -m "Update image to ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}:${VERSION}"
+          git push https://${{ secrets.PAT_TOKEN }}@github.com/jagadamma/3tier.git
