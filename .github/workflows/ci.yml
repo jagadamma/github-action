@@ -10,8 +10,8 @@ jobs:
 
     env:
       # Customize this
-      IMAGE_NAME: nginx              
-      VERSION: v1                     
+      IMAGE_NAME: myimg             
+      VERSION: latest
       REPO_URL: https://github.com/jagadamma/3tier.git
 
     steps:
